@@ -6,7 +6,8 @@ import * as path from 'path';
 const FILE = 'day-5.txt';
 
 const dataPath = path.join(__dirname, '..', '..', 'assets', FILE);
-let seeds: string[] | undefined = undefined;
+
+const seeds: number[] = [];
 const seed2soil: number[][] = [];
 const soil2fert: number[][] = [];
 const fert2water: number[][] = [];
@@ -17,8 +18,9 @@ const humid2loc: number[][]= [];
 
 async function parseMap() {
   const lines =  readLines<string>(dataPath);
-  seeds = await lines.next().then((res) => res.value!.split(':').at(1)?.split(' ').filter((item) => item !== ''))
-  console.log(seeds);
+
+  seeds.push(...await lines.next().then((res) => res.value!.split(':').at(1)?.split(' ').filter((item) => item !== '').map(c => parseInt(c)) as number[]));
+
   for await (const line of lines) {
     switch (line) {
       case "seed-to-soil map:":
@@ -73,30 +75,18 @@ async function parseMap() {
         }
         break;
       default:
-
     }
-
   }
 }
 async function solution1() {
    await parseMap();
 
-console.log(seed2soil);
-console.log(soil2fert);
-console.log(fert2water);
-console.log(water2light);
-console.log(light2temp);
-console.log(temp2humid);
-console.log(humid2loc);
-
   if(!seeds) return;
   let  minLoc = Infinity;
   for (const seed of seeds) {
-    const seedVal = parseInt(seed);
-    //console.log('seed', seedVal);
 
     // find soil
-    const soil = getValue(seedVal, seed2soil);
+    const soil = getValue(seed, seed2soil);
     //console.log('soil', soil);
 
     // find  fert
@@ -133,7 +123,7 @@ console.log(humid2loc);
 function getValue(source: number, map: number[][]) {
     let dest= source 
     for (const row of map){
-      if (row[1] <= source && source <= row[1] + row[2]) {
+      if (row[1] <= source && source < row[1] + row[2]) {
         // in range!
         const gap = source - row[1];
         dest = row[0] + gap;
@@ -143,18 +133,10 @@ function getValue(source: number, map: number[][]) {
   return dest
     }
 
-//solution1();
+solution1();
 
 async function solution2() {
    await parseMap();
-
-// console.log(seed2soil);
-// console.log(soil2fert);
-// console.log(fert2water);
-// console.log(water2light);
-// console.log(light2temp);
-// console.log(temp2humid);
-// console.log(humid2loc);
 
   if(!seeds) return;
   let  minLoc = Infinity;
@@ -163,7 +145,7 @@ async function solution2() {
   let idx = 0;
 
   while (idx < seeds.length) {
-    seedMap.push([parseInt(seeds[idx]), parseInt(seeds[idx+1])])
+    seedMap.push([seeds[idx], seeds[idx+1]])
     idx = idx + 2
 
   }
@@ -172,7 +154,7 @@ async function solution2() {
 
 
   for (const range of seedMap) {
-    for (let seed = range[0]; seed <= range[0]+range[1]; seed++) {
+    for (let seed = range[0]; seed < range[0]+range[1]; seed++) {
       //console.log('seed', seedVal);
 
       // find soil
@@ -211,4 +193,4 @@ async function solution2() {
   console.log('minLoc', minLoc);
 }
 
-solution2();
+//solution2();
