@@ -1,4 +1,3 @@
-import { argv0 } from 'process';
 import { readLines } from '../utils';
 import * as path from 'path';
 
