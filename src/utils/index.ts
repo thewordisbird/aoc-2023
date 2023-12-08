@@ -132,3 +132,38 @@ export class MaxHeap<T> {
     return rightIdx;
   }
 }
+
+export function primeFactors(num: number) {
+  const primes = [];
+  let n = num;
+  let p = 2;
+
+  while (n >= p * p) {
+    if (n % p === 0){
+      primes.push(p)
+      n = n/p;
+    } else {
+      p = p + 1;
+    }
+  }
+  primes.push(n);
+  return primes;
+}
+
+export function lowestCommonMultiple(nums: number[]) {
+  const primes = new Set<number>();
+
+  nums.forEach((num) => {
+    const factors = primeFactors(num);
+    factors.forEach((factor) => {primes.add(factor)})
+
+  })
+
+  let lcm = 1
+  primes.forEach((prime) => {
+    lcm = lcm * prime;
+  })
+
+  return lcm
+}
+
